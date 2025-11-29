@@ -1,4 +1,4 @@
-import { User } from "@clerk/express";
+import User from "../models/User.js";
 import { Inngest } from "inngest";
 
 
@@ -19,7 +19,7 @@ const syncCreation = inngest.createFunction(
             image: image_url
 
         }
-        await User.creat(userData)
+        await User.create(userData)
 
 
     }
@@ -32,7 +32,7 @@ const synUserDeletion = inngest.createFunction(
     { event: 'clerk/user.deleted' },
     async ({ event }) => {
         const { id } = event.data
-        await User.findByIdAndDele(id)
+        await User.findByIdAndDelete(id)
     }
 )
 
@@ -62,6 +62,6 @@ const synUserUpdation = inngest.createFunction(
 // Create an empty array where we'll export future Inngest functions
 export const functions =
     [syncCreation,
-        synUserDeletion, 
+        synUserDeletion,
         synUserUpdation
     ];
