@@ -16,10 +16,13 @@
   },
   "dependencies": {
     "@clerk/express": "^1.7.53",
+    "axios": "^1.13.2",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "inngest": "^3.46.0",
-    "mongoose": "^9.0.0"
+    "mongoose": "^9.0.0",
+    "stripe": "^20.0.0",
+    "svix": "^1.82.0"
   }
 }

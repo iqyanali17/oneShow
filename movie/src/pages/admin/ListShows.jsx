@@ -5,35 +5,34 @@ import Loading from '../../components/Loading';
 import Title from '../../components/admin/Title';
 import { useEffect, useState } from 'react';
 import dateFormat from '../../lib/isoTimeFormat';
+import { useAppContext } from '../../context/appContext';
 
 
 const ListShows = () => {
     const currency = import.meta.env.VITE_CURRENCY
+
+     const { axios, getToken, user } = useAppContext()
+
     const [shows, setShows] = useState([]);
     const [loading, setLoading] = useState(true);
 
     const getAllShows = async () => {
         try {
-            setShows([{
-                movie: dummyShowsData[0],
-                showDateTime: "2025-11-30T02:30:00.000z",
-                showprice: 59,
-                occupiedSeats: {
-                    A1: "user_1",
-                    B1: "user_2",
-                    C1: "user_3"
-
-                }
-            }]);
-            setLoading(false)
+          const {data }=await axios.get("/api/admin/all-shows",{
+            headers:{Authorization:`Bearer ${await getToken()}`}
+          })
+          setShows(data.shows)
+            setLoading(false);
         }
         catch (error) {
             console.log(error)
         }
     }
     useEffect(() => {
-        getAllShows()
-    }, [])
+        if(user){
+            getAllShows();
+        }
+    }, [user])
     return !loading ? (
         <>
             <Title text1="List" text2="List Shows" />
@@ -48,14 +47,19 @@ const ListShows = () => {
                         </tr>
                     </thead>
                     <tbody className='text-sm font-light'>
-                        {shows.map((show,index)=>(
-                            <tr key={index} className=' bg-primary/10 border-b border-primary/10'>
-                                <td className='py-2 min-w-45 pl-5'>{show.movie.title}</td>
-                                <td className='py-2'>{show.showDateTime}</td>
-                                <td className='py-2'>{dateFormat(show.showDateTime)}</td>
-                                <td className='py-2'>{currency}{(show.occupiedSeats ? Object.keys(show.occupiedSeats).length : 0) * (show.showPrice || 0)}</td>
-                            </tr>
-                        ))}
+                        {shows.map((show,index)=>{
+                            const movie = show.movie || {};
+                            const bookingCount = show.occupiedSeats ? Object.keys(show.occupiedSeats).length : 0;
+                            const earnings = bookingCount * (show.showPrice || 0);
+                            return (
+                                <tr key={index} className=' bg-primary/10 border-b border-primary/10'>
+                                    <td className='py-2 min-w-45 pl-5'>{movie.title || 'Unknown movie'}</td>
+                                    <td className='py-2'>{dateFormat(show.showDateTime)}</td>
+                                    <td className='py-2'>{bookingCount}</td>
+                                    <td className='py-2'>{currency}{earnings}</td>
+                                </tr>
+                            );
+                        })}
                     </tbody>
                 </table>
 

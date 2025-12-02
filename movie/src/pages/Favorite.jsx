@@ -1,18 +1,22 @@
 import React from "react";
-import { dummyShowsData } from "../assets/assets"
 import MovieCard from "../components/MovieCard";
 import BlurCircle from "../components/BlurCircle";
-const Favorite = () => {
-  return dummyShowsData.length > 0 ? (
-    <div className="relative my-40 mb-60 px-6 md:px-16 lg:px-40 xl:px-44 overflow-hidden min-h-[80vh]">
+import { useAppContext } from "../context/appContext";
 
-     <BlurCircle top="150" left="0px" />
-<BlurCircle bottom="50px" right="50px" />
+const Favorite = () => {
+  const { favoriteMovies } = useAppContext();
+
+  const validFavorites = favoriteMovies.filter((movie) => movie && movie._id);
+
+  return validFavorites.length > 0 ? (
+    <div className="relative my-40 mb-60 px-6 md:px-16 lg:px-40 xl:px-44 overflow-hidden min-h-[80vh]">
+      <BlurCircle top="150" left="0px" />
+      <BlurCircle bottom="50px" right="50px" />
 
       <h1 className="text-lg font-medium my-4">Your Favorite Movies</h1>
-      <div className="flex flex-wrap max-sm:justify-center  gap-4">
-        {dummyShowsData.map((movie) => (
-          <MovieCard movie={movie} key={movie.id} />
+      <div className="flex flex-wrap max-sm:justify-center gap-4">
+        {validFavorites.map((movie) => (
+          <MovieCard movie={movie} key={movie._id} />
         ))}
       </div>
     </div>
@@ -20,7 +24,7 @@ const Favorite = () => {
     <div className="flex flex-col items-center justify-center h-screen">
       <h1 className="text-3xl font-bold text-center">No movies Available</h1>
     </div>
-  )
-}
+  );
+};
 
 export default Favorite;
