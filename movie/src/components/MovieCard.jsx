@@ -8,8 +8,8 @@ const MovieCard = ({ movie }) => {
     const navigate = useNavigate();
     const { image_base_url } = useAppContext();
     
-    // Return loading state if movie is null
-    if (!movie) {
+    // Return loading state if movie is null or has no essential data
+    if (!movie || !movie._id) {
         return (
             <div className="flex flex-col justify-between p-3 bg-gray-800 rounded-2xl w-66 h-80 animate-pulse">
                 <div className="bg-gray-700 rounded-lg h-52 w-full"></div>
@@ -32,9 +32,9 @@ const MovieCard = ({ movie }) => {
                         window.scrollTo(0, 0);
                     }
                 }} 
-                src={movie?.backdrop_path ? `${image_base_url}${movie.backdrop_path}` : '/placeholder-movie.jpg'}
+                src={movie?.poster_path ? `${image_base_url}${movie.poster_path}` : movie?.backdrop_path ? `${image_base_url}${movie.backdrop_path}` : '/placeholder-movie.jpg'}
                 alt={movie?.title || 'Movie poster'} 
-                className="rounded-lg h-52 w-full object-cover object-bottom-right cursor-pointer"
+                className="rounded-lg h-52 w-full object-cover cursor-pointer"
             />
             
             <p className="font-semibold mt-2 truncate">{movie?.title || 'Movie Title'}</p>

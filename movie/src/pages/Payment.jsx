@@ -218,6 +218,7 @@ const Payment = () => {
               className="w-full rounded-lg border border-primary/40 bg-black/40 px-4 py-3 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
               placeholder="Enter movie name"
               required
+              readOnly
             />
           </div>
 
@@ -231,11 +232,12 @@ const Payment = () => {
                 type="number"
                 min="1"
                 step="0.01"
-                value={amount}
+                value={amount || ""}
                 onChange={(e) => setAmount(e.target.value)}
                 className="w-full rounded-lg border border-primary/40 bg-black/40 pl-8 pr-4 py-3 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
                 placeholder="0.00"
                 required
+                readOnly
               />
             </div>
           </div>

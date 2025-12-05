@@ -100,11 +100,20 @@ const MovieDetails = () => {
         </div>
       </div>
       <p className="text-lg font-medium my-20">Your Favorite Cast</p>
-      <div className="overflow-x-auto no-srollbar mt-8 pb-4">
-        <div className="flex items-center gap--4 w-max px-4">
-          {show.movie.casts.slice(0, 12).map((cast, index) => (
+      <div className="overflow-x-auto no-scrollbar mt-8 pb-4">
+        <div className="flex items-center gap-4 w-max px-4">
+          {show.movie.casts
+            .filter(cast => cast && cast.name)
+            .slice(0, 12)
+            .map((cast, index) => (
             <div key={index} className="flex flex-col items-center ">
-              <img src={ image_base_url + cast.profile_path} alt="" className="rounded-full h-20 md:h-20 aspect-square object-cover" />
+              {cast.profile_path ? (
+                <img src={image_base_url + cast.profile_path} alt={cast.name} className="rounded-full h-20 md:h-20 aspect-square object-cover" />
+              ) : (
+                <div className="rounded-full h-20 md:h-20 aspect-square bg-gray-700 flex items-center justify-center text-gray-400 font-semibold text-lg">
+                  {cast.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}
+                </div>
+              )}
               <p className="font-medium text-xs mt-3">{cast.name}</p>
             </div>
 
@@ -115,11 +124,11 @@ const MovieDetails = () => {
 
       <DateSelect dataTime={show.dateTime} id={id} />
       <p className="text-lg font-medium mt-20 mb-8 ">You May Also Like</p>
-      <div className="flex flex_wrap max-sm:justify-center gap-8">{shows.slice(0, 4).map((movie, index) => (
+      <div className="flex flex-wrap max-sm:justify-center gap-8">{shows.filter(movie => movie && movie._id).slice(0, 4).map((movie, index) => (
         <MovieCard key={index} movie={movie} />
       ))}</div>
       <div className="flex justify-around mt-20">
-        <button onClick={() => { navigate('/movies'); scrollTo(0, 0) }} className="px-10 py-3 text-sm bg-primary hover:  transition rounded-md font-medium cursor pointer">Show More</button>
+        <button onClick={() => { navigate('/movies'); scrollTo(0, 0) }} className="px-10 py-3 text-sm bg-primary hover:bg-primary-dull transition rounded-md font-medium cursor-pointer">Show More</button>
       </div>
 
 
