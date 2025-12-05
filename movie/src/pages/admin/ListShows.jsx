@@ -35,8 +35,8 @@ const ListShows = () => {
     return !loading ? (
         <>
             <Title text1="List" text2="List Shows" />
-            <div className='max-w-4xl mt-6 overflow-x-auto'>
-                <table className='w-full border-collapse rounded-md overflow-hidden text-wrap'>
+            <div className='w-full h-full mt-6 overflow-x-auto'>
+                <table className='w-full h-full border-collapse rounded-md overflow-hidden text-wrap'>
                     <thead>
                         <tr className='bg-primary/30 text-left text-white'>
                         <th className='py-2 font-medium'>Movie Name</th>

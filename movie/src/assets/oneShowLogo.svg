@@ -1,0 +1,8 @@
+<svg width="145" height="27" viewBox="0 0 145 27" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Play button circle -->
+  <circle cx="13.5" cy="13.5" r="12" fill="#FF6B6B"/>
+  <path d="M10 8 L10 18 L18 13 Z" fill="white"/>
+  
+  <!-- oneShow text -->
+  <text x="32" y="19" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="white">oneShow</text>
+</svg>

@@ -72,7 +72,7 @@ const Dashboad = () => {
                 <BlurCircle top="-100px" left="0" />
                 <div className='flex flex-wrap gap-4 w-full'>
                     {dashboadCards.map((card, index) => (
-                        <div key={index} className="flex items-center justify-between px-4 py-3 bg-primary/10 border border-primary/20 rounded-md max-w-50 w-full">
+                        <div key={index} className="flex items-center justify-between px-4 py-3 bg-primary/10 border border-primary/20 rounded-md flex-1">
                             <div>
 
                                 <h1 className='text-sm'>{card.title}</h1>

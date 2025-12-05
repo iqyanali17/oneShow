@@ -4,6 +4,7 @@ import { clerkClient, getAuth } from "@clerk/express";
 import Booking from "../models/Booking.js";
 import User from "../models/User.js";
 import Movie from "../models/Movie.js";
+import Show from "../models/Show.js";
 
 export const getUserBookings = async (req, res) => {
     try {
@@ -117,6 +118,18 @@ export const cancelBooking = async (req, res) => {
 
         if (!booking) {
             return res.status(404).json({ success: false, message: "Booking not found or already paid" });
+        }
+
+        // Release the seats back to the Show model
+        if (booking.bookedSeats && booking.bookedSeats.length > 0) {
+            const showData = await Show.findById(booking.show);
+            if (showData && showData.occupiedSeats) {
+                booking.bookedSeats.forEach((seat) => {
+                    delete showData.occupiedSeats[seat];
+                });
+                showData.markModified('occupiedSeats');
+                await showData.save();
+            }
         }
 
         res.json({ success: true, message: "Booking cancelled successfully" });

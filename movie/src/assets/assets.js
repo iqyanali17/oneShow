@@ -1,4 +1,4 @@
-import logo from './logo.svg'
+import logo from './ChatGPT Image Dec 6, 2025, 12_15_39 AM.png'
 import marvelLogo from './marvelLogo.svg'
 import googlePlay from './googlePlay.svg'
 import appStore from './appStore.svg'
