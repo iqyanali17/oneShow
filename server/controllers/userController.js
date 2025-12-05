@@ -12,7 +12,7 @@ export const getUserBookings = async (req, res) => {
             return res.status(401).json({ success: false, message: "Authentication required" });
         }
 
-        const bookings = await Booking.find({ user: userId }).populate({
+        const bookings = await Booking.find({ user: userId, isPaid: true }).populate({
             path: 'show',
             populate: { path: 'movie' }
         }).sort({ createdAt: -1 });
@@ -47,6 +47,24 @@ export const updateFavorite = async (req, res) => {
 
         await clerkClient.users.updateUserMetadata(userId, { privateMetadata: user.privateMetadata });
         res.json({ success: true, message: "Favorite movies updated" });
+    } catch (error) {
+        console.log(error);
+        res.json({ success: false, message: error.message });
+    }
+}
+
+export const getUnpaidBookings = async (req, res) => {
+    try {
+        const { userId } = getAuth(req);
+        if (!userId) {
+            return res.status(401).json({ success: false, message: "Authentication required" });
+        }
+
+        const bookings = await Booking.find({ user: userId, isPaid: false }).populate({
+            path: 'show',
+            populate: { path: 'movie' }
+        }).sort({ createdAt: -1 });
+        res.json({ success: true, bookings });
     } catch (error) {
         console.log(error);
         res.json({ success: false, message: error.message });

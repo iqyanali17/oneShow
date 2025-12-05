@@ -65,7 +65,7 @@ export const createBooking = async (req, res) => {
         await showData.save();
 
         // Stripe Gateway initialize could go here
-        res.json({ success: true, message: "Booked successfully", booking })
+        res.json({ success: true, message: "To confirm seat please payment within 10 min", booking })
 
     } catch (error) {
         console.log(error.message);

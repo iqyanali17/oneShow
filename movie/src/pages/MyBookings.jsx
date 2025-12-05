@@ -15,17 +15,26 @@ const MyBookings = () => {
 
   const { axios, getToken, user, image_base_url } = useAppContext()
   const [bookings, setBookings] = useState([]);
+  const [unpaidBookings, setUnpaidBookings] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
   const getMyBookings = async () => {
    try{
-
+    // Get paid bookings
     const{data}=await axios.get(`/api/user/bookings`,
        { headers: { Authorization: `Bearer ${await getToken()}` } 
     })
     if(data.success){
       setBookings(data.bookings)
+    }
+
+    // Get unpaid bookings
+    const unpaidData = await axios.get(`/api/user/unpaid-bookings`,
+       { headers: { Authorization: `Bearer ${await getToken()}` } 
+    })
+    if(unpaidData.data.success){
+      setUnpaidBookings(unpaidData.data.bookings)
     }
    }catch(error){
 console.log(error)
@@ -57,7 +66,55 @@ console.log(error)
         <BlurCircle bottom="0px" left="600px" />
       </div>
       <h1 className="text-lg font-semibold mb-4">My Bookings  </h1>
-      {bookings.map((item,index)=>(
+      
+      {/* Unpaid Bookings Section */}
+      {unpaidBookings.length > 0 && (
+        <div className="mb-8">
+          <h2 className="text-md font-medium mb-3 text-orange-400">⏰ Pending Payment (Complete within 10 minutes)</h2>
+          {unpaidBookings.map((item,index)=>(
+            <div key={`unpaid-${index}`} className="flex flex-col md:dflex-row justify-between bg-orange-500/10 border border-orange-500/30 rounded-lg mt-4 p-2 max-w-3xl">
+              <div className="flex flex-col md:flex-row">
+                <img src={ image_base_url + item.show.movie.poster_path} alt="" className="md:max-w-45 aspect-video h-auto object-cover object-bottom rounded"/>
+                <div className="flex flex-col p-4">
+                  <p className="text-lg font-semibold">{item.show.movie.title}</p>
+                  <p className="text-gray-400 text-sm">{timeFormat(item.show.movie.runtime)}</p>
+                  <p className="text-gray-400 text-sm mt-auto">{dateFormat(item.show.showDateTime)}</p>
+                </div>
+              </div>
+
+              <div className="flex flex-col md:items-end md:text-right justify-between p-4">
+                <div className="flex items-center gap-4">
+                  <p className="text-2xl font-semibold mb-3">{currency}{item.amount}</p>
+                  <button
+                    className="bg-orange-500 hover:bg-orange-600 px-4 py-1 mb-3 text-sm rounded-full font-medium cursor-pointer transition"
+                    onClick={() =>
+                      navigate('/payment', {
+                        state: {
+                          movieName: item.show.movie.title,
+                          amount: item.amount,
+                          bookingId: item._id,
+                        },
+                      })
+                    }
+                  >
+                    Pay Now
+                  </button>
+                </div>
+                <div className="text-sm">
+                  <p><span className="text-gray-400">Total Ticket : </span> {item.bookedSeats.length}</p>
+                  <p><span className="text-gray-400">Seat Number : </span> {item.bookedSeats.join(", ")}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Paid Bookings Section */}
+      {bookings.length > 0 && (
+        <div>
+          <h2 className="text-md font-medium mb-3 text-green-400">✅ Confirmed Bookings</h2>
+          {bookings.map((item,index)=>(
         <div key={index} className="flex flex-col md:dflex-row justify-between bg-primary/8 border border-primary/20 rounded-lg mt-4 p-2 max-w-3xl"><div className="flex flex-col md:flex-row">
           <img src={ image_base_url + item.show.movie.poster_path} alt="" className="md:max-w-45 aspect-video h-auto object-cover object-bottom rounded"/>
           <div className="flex flex-col p-4">
@@ -68,25 +125,7 @@ console.log(error)
         </div>
 
         <div className="flex flex-col md:items-end md:text-right justify-between p-4">
-          <div className="flex items-center gap-4">
-            <p className="text-2xl font-semibold mb-3">{currency}{item.amount}</p>
-            {!item.isPaid && (
-              <button
-                className="bg-primary px-4 py-1 mb-3 text-sm rounded-full font-medium cursor-pointer"
-                onClick={() =>
-                  navigate('/payment', {
-                    state: {
-                      movieName: item.show.movie.title,
-                      amount: item.amount,
-                      bookingId: item._id, // Pass booking ID
-                    },
-                  })
-                }
-              >
-                Pay Now
-              </button>
-            )}
-            </div>
+          <p className="text-2xl font-semibold mb-3">{currency}{item.amount}</p>
             <div className="text-sm">
               <p><span className="text-gray-400" >Total Ticket : </span> {item.bookedSeats.length}</p>
 
@@ -97,7 +136,20 @@ console.log(error)
         </div>
         </div>
       ))}
+        </div>
+      )}
 
+      {bookings.length === 0 && unpaidBookings.length === 0 && (
+        <div className="text-center py-12">
+          <p className="text-gray-400">You don't have any bookings yet.</p>
+          <button 
+            onClick={() => navigate('/movies')}
+            className="mt-4 px-6 py-2 bg-primary hover:bg-primary-dull rounded-full font-medium cursor-pointer transition"
+          >
+            Browse Movies
+          </button>
+        </div>
+      )}
 
     </div>
   ) : <Loading />

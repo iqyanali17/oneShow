@@ -1,4 +1,6 @@
 import User from "../models/User.js";
+import Booking from "../models/Booking.js";
+import Show from "../models/Show.js";
 import { Inngest } from "inngest";
 
 // Create a client to send and receive events
@@ -89,9 +91,51 @@ const synUserUpdation = inngest.createFunction(
     }
 )
 
+// Inngest Function to clean up expired unpaid bookings
+const cleanupExpiredBookings = inngest.createFunction(
+    { id: 'cleanup-expired-bookings' },
+    { cron: '*/5 * * * *' }, // Run every 5 minutes
+    async () => {
+        try {
+            console.log('Running cleanup for expired bookings...');
+            
+            // Find bookings that are unpaid and older than 10 minutes
+            const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
+            const expiredBookings = await Booking.find({
+                isPaid: false,
+                createdAt: { $lt: tenMinutesAgo }
+            });
+            
+            console.log(`Found ${expiredBookings.length} expired bookings`);
+            
+            for (const booking of expiredBookings) {
+                // Release the seats back to available
+                const show = await Show.findById(booking.show);
+                if (show) {
+                    booking.bookedSeats.forEach(seat => {
+                        delete show.occupiedSeats[seat];
+                    });
+                    show.markModified('occupiedSeats');
+                    await show.save();
+                }
+                
+                // Delete the expired booking
+                await Booking.findByIdAndDelete(booking._id);
+                console.log(`Removed expired booking: ${booking._id}`);
+            }
+            
+            return { success: true, cleanedBookings: expiredBookings.length };
+        } catch (error) {
+            console.error('Error cleaning up expired bookings:', error);
+            throw error;
+        }
+    }
+)
+
 // Export all functions as an array
 export const functions = [
     syncCreation,
     synUserDeletion,
-    synUserUpdation
+    synUserUpdation,
+    cleanupExpiredBookings
 ];
