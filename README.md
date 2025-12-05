@@ -2,6 +2,8 @@
 
 A full-stack movie ticket booking application built with React, Node.js, and MongoDB, featuring user authentication, payment integration, and admin dashboard.
 
+Live project Link:https://one-show.vercel.app/
+
 ## 🎬 Features
 
 ### User Features
