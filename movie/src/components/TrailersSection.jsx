@@ -171,7 +171,9 @@ const TrailersSection = () => {
                                     style={{
                                         minWidth: '100%',
                                         minHeight: '100%',
-                                        objectFit: 'cover'
+                                        objectFit: 'cover',
+                                        opacity: 0,
+                                        transition: 'opacity 0.3s ease-in-out'
                                     }}
                                     onError={(e) => {
                                         const img = e.target;
@@ -206,11 +208,10 @@ const TrailersSection = () => {
                                         console.log('Thumbnail loaded successfully:', e.target.src);
                                         e.target.style.opacity = '1';
                                     }}
-                                    style={{ opacity: 0, transition: 'opacity 0.3s ease-in-out' }}
                                 />
                             </div>
                             {/* Debug overlay - shows video ID on hover */}
-                            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/80 to-transparent p-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                 <p className="text-white text-xs font-medium truncate">{trailer.title || 'Movie Trailer'}</p>
                                 <p className="text-gray-300 text-[10px]">{trailer.videoId || 'No video ID'}</p>
                             </div>

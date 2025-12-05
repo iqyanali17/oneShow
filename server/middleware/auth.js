@@ -2,7 +2,24 @@ import { clerkClient, getAuth } from '@clerk/express';
 
 export const protectAdmin = async (req, res, next) => {
     try {
-        const { userId } = getAuth(req);
+        let userId;
+        
+        // Try to get userId from Clerk session first
+        const auth = getAuth(req);
+        userId = auth?.userId;
+        
+        // If no session, try to get from Authorization header (Bearer token)
+        if (!userId && req.headers.authorization) {
+            const token = req.headers.authorization.replace('Bearer ', '');
+            try {
+                // Verify the JWT token and extract userId
+                const verifiedToken = await clerkClient.verifyToken(token);
+                userId = verifiedToken.sub;
+            } catch (tokenError) {
+                console.warn('Token verification failed:', tokenError.message);
+            }
+        }
+        
         if (!userId) {
             return res.status(401).json({ success: false, message: "Authentication required" });
         }

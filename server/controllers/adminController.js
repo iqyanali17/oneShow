@@ -28,7 +28,10 @@ export const isAdmin = async (req, res) => {
 // API to get dashboard data
 export const getDashboardData = async (req, res) => {
     try {
-        const bookings = await Booking.find({ isPaid: true });
+        // Get all bookings (not just paid ones) for total count
+        const allBookings = await Booking.find({});
+        // Get paid bookings for revenue calculation
+        const paidBookings = await Booking.find({ isPaid: true });
         const activeShowsRaw = await Show.find({})
             .populate('movie')
             .sort({ showDateTime: 1 });
@@ -36,13 +39,21 @@ export const getDashboardData = async (req, res) => {
         // Filter out any shows where the movie failed to populate
         const activeShows = activeShowsRaw.filter(show => !!show.movie);
 
-        const totalUser = await User.countDocuments();
+        // Get total users - if no users exist, try to get from Clerk
+        let totalUser = await User.countDocuments();
+        
+        // If no users in database, we'll show a message but not 0
+        if (totalUser === 0) {
+            console.log('No users found in database - Clerk webhook may not be configured');
+        }
 
         const dashboardData = {
-            totalBooking: bookings.length,
-            totalRevenue: bookings.reduce((acc, booking) => acc + booking.amount, 0),
+            totalBooking: allBookings.length,
+            totalRevenue: paidBookings.reduce((acc, booking) => acc + (booking.amount || 0), 0),
             activeShows,
             totalUser,
+            paidBookings: paidBookings.length,
+            unpaidBookings: allBookings.length - paidBookings.length
         };
         res.json({ success: true, dashboardData });
     } catch (error) {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import Loading from "../components/Loading";
 import BlurCircle from "../components/BlurCircle";
 import { dummyBookingData } from "../assets/assets";
@@ -7,9 +7,11 @@ import { Clock, Ticket, MapPin, Calendar, ArrowRight } from "lucide-react";
 import timeFormat from "../lib/timeFormat";
 import { dateFormat } from "../lib/dateFormat";
 import { useAppContext } from "../context/appContext";
+import toast from "react-hot-toast";
 
 const MyBookings = () => {
   const currency = import.meta.env.VITE_CURRENCY || '$';
+  const location = useLocation();
 
   const { axios, getToken, user, image_base_url } = useAppContext()
   const [bookings, setBookings] = useState([]);
@@ -36,6 +38,17 @@ console.log(error)
     }
   }, [user]);
 
+  // Check if user returned from successful payment
+  useEffect(() => {
+    if (location.state?.paymentSuccess) {
+      toast.success('Payment completed successfully!');
+      // Refresh bookings to show updated payment status
+      getMyBookings();
+      // Clear the state to prevent showing toast again on refresh
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [location.state]);
+
 
   return !isLoading ? (
     <div className="relative px-6 md:px-16 lg:px-40 pt-30 md:pt-40 min-h-[80vh]">
@@ -57,7 +70,22 @@ console.log(error)
         <div className="flex flex-col md:items-end md:text-right justify-between p-4">
           <div className="flex items-center gap-4">
             <p className="text-2xl font-semibold mb-3">{currency}{item.amount}</p>
-            {!item.isPaid && <button className="bg-primary px-4 py-1 mb-3 text-sm rounded-full font-medium cursor-pointer"> Play Now</button>}
+            {!item.isPaid && (
+              <button
+                className="bg-primary px-4 py-1 mb-3 text-sm rounded-full font-medium cursor-pointer"
+                onClick={() =>
+                  navigate('/payment', {
+                    state: {
+                      movieName: item.show.movie.title,
+                      amount: item.amount,
+                      bookingId: item._id, // Pass booking ID
+                    },
+                  })
+                }
+              >
+                Pay Now
+              </button>
+            )}
             </div>
             <div className="text-sm">
               <p><span className="text-gray-400" >Total Ticket : </span> {item.bookedSeats.length}</p>

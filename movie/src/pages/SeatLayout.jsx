@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { assets, dummyDateTimeData, dummyShowsData } from "../assets/assets";
-import Loading from "../components/Loading";
 import { ArrowRightIcon, Clock1Icon, ClockIcon } from "lucide-react";
+import Loading from "../components/Loading";
 import BlurCircle from "../components/BlurCircle";
 import toast from "react-hot-toast";
 import isoTimeFormat from "../lib/isoTimeFormat";
@@ -20,7 +20,7 @@ const SeatLayout = () => {
 
   const navigate = useNavigate()
 
-  const { axios, getToken, user } = useAppContext();
+  const { axios, getToken, user, currency } = useAppContext();
 
   const getShow = async () => {
     try {
@@ -123,6 +123,10 @@ const bookedTickets = async () => {
       <div className="w-60 bg-primary/10 border border-primary/20 rounded-lg py-10">
         <p className="text-lg font-semibold px-6">Available Timing</p>
         <div className="mt-5 space-y-1" >
+          <div className="px-6 pb-3 border-b border-primary/20">
+            <p className="text-sm text-gray-300">Ticket Price</p>
+            <p className="text-lg font-semibold">{currency}{show.showPrice || 0}</p>
+          </div>
           {show.dateTime[date].map((item) => (
             <div key={item.time} onClick={() => setSelectedTime(item)} className={`flex items-center gap-2 px-6 py-2 w-max rounded-r-md cursor-pointer
           ${selectedTime?.time === item.time ? "bg-primary text-white" : "hover:bg-primary/20"}`}>

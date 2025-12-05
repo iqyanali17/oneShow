@@ -9,7 +9,7 @@ import showRouter from "./routes/showRoutes.js";
 import bookingRouter from "./routes/BookingRoutes.js";
 import adminRouter from "./routes/adminRoutes.js";
 import userRouter from "./routes/userRoutes.js";
-
+import paymentRouter from "./routes/paymentRoutes.js";
 
 const app = express();
 const port = 3000;
@@ -20,9 +20,6 @@ await connectDB()
 app.use(express.json());
 app.use(cors());
 app.use(clerkMiddleware())
-
-
-
 
 // api routes
 app.get('/', (req, res) => {
@@ -37,6 +34,7 @@ app.use('/api/show', showRouter)
 app.use('/api/booking', bookingRouter)
 app.use('/api/admin', adminRouter)
 app.use('/api/user', userRouter)
+app.use('/api/payment', paymentRouter)
 
 app.listen(port, () => {
     console.log(`server is running on http://localhost:${port}`)

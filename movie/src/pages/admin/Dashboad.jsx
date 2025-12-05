@@ -22,10 +22,10 @@ const Dashboad = () => {
     const [loading, setLoading] = useState(true);
 
     const dashboadCards = [
-        { title: "Title Booking", value: dashboardData.totalBooking || "0", icon: ChartLineIcon },
+        { title: "Total Booking", value: dashboardData.totalBooking || "0", icon: ChartLineIcon },
         { title: "Total Revenue", value: currency + dashboardData.totalRevenue || "0", icon: CircleDollarSignIcon },
         { title: "Active Shows", value: dashboardData.activeShows.length || "0", icon: PlayCircleIcon },
-        { title: " Users ", value: dashboardData.totalUser || "0", icon: UsersIcon }
+        { title: "Users", value: dashboardData.totalUser || "0", icon: UsersIcon }
     ]
 
     const fetchDashboardData = async () => {
@@ -64,7 +64,6 @@ const Dashboad = () => {
 
 
 
-    1
     return !loading ? (
         <>
             <Title text1="Admin" text2="Dashboard" />
@@ -94,7 +93,7 @@ const Dashboad = () => {
                             const movie = show.movie || {};
                             return (
                                 <div key={show._id} className="h-full flex flex-col rounded-lg overflow-hidden bg-primary/10 border border-primary/20 hover:shadow-lg transition-all duration-300">
-                                    <div className="aspect-[3/4] w-full overflow-hidden">
+                                    <div className="aspect-3/4 w-full overflow-hidden">
                                         <img
                                             src={ image_base_url + movie.poster_path || ''}
                                             alt={movie.title || 'Movie poster'}

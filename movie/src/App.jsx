@@ -16,6 +16,7 @@ import AddShows from "./pages/admin/AddShows";
 import ListBookings from "./pages/admin/ListBooking";
 import { useAppContext } from "./context/appContext";
 import { SignIn } from "@clerk/clerk-react";
+import Payment from "./pages/Payment";
 
 const App = () => {
   const location = useLocation();
@@ -35,6 +36,7 @@ const App = () => {
         <Route path="/movies/:id/:date" element={<SeatLayout />} />
         <Route path="/my-bookings" element={<MyBookings />} />
         <Route path="/favorite" element={<Favorite />} />
+        <Route path="/payment" element={<Payment />} />
          
         <Route path="/admin/*" element={user ?<Layout />: (
          <div className="min-h-screen flex justify-center items-center">
